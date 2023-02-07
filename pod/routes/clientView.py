@@ -42,7 +42,9 @@ def add_client():
     new_email=body.get('email',None)
     new_tel=body.get('tel',None)
     new_adresse=body.get('adresse',None)
-    client = Client(nom=new_nom,prenom=new_prenom,email=new_email,tel=new_tel,adresse=new_adresse)
+    new_id_typeclient=body.get('id_typeclient',None)
+    new_id_utilisateur=body.get('id_utilisateur',None)
+    client = Client(nom=new_nom,prenom=new_prenom,email=new_email,tel=new_tel,adresse=new_adresse,id_typeclient=new_id_typeclient,id_utilisateur=new_id_utilisateur)
     client.insert()
     clients=Client.query.all()
     clients_formatted=[p.format()  for p in clients]

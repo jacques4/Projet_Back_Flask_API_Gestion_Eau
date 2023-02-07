@@ -1,5 +1,10 @@
 from pod.extension import db
 
+from pod.models.utilisateur import Utilisateur
+from pod.models.client import Client
+from pod.models.produits import Produit
+
+
 
 class Commande(db.Model):
     __tablename__='commandes'
@@ -11,16 +16,19 @@ class Commande(db.Model):
     status=db.Column(db.Boolean,nullable=True)
     id_utilisateur=db.Column(db.Integer,db.ForeignKey('utilisateurs.id'),nullable=False)
     id_client=db.Column(db.Integer,db.ForeignKey('clients.id'),nullable=False)
+    id_produit=db.Column(db.Integer,db.ForeignKey('produits.id'),nullable=False)
+    
 
 
-    def __init__(self, nom,quantite,description,date,status,id_utilisateur,id_client):
+    def __init__(self, nom,quantite,description,date,status,id_utilisateur,id_client,id_produit):
         self.nom=nom
         self.quantite=quantite
         self.description=description
         self.date=date
         self.status=status
-        self.id_utilisateur
-        self.id_client
+        self.id_utilisateur=id_utilisateur
+        self.id_client=id_client
+        self.id_produit=id_produit
 
 
     def insert(self):
@@ -29,7 +37,7 @@ class Commande(db.Model):
    
 
     def delete(self):
-        db.session.delete(self)
+        db.sessio0n.delete(self)
         db.session.commit()
      
 
@@ -38,15 +46,23 @@ class Commande(db.Model):
          
 
     def format(self):
-            return{
+        utilisateur=Utilisateur.query.get(self.id_utilisateur)
+        client=Client.query.get(self.id_client)
+        produit=Produit.query.get(self.id_produit)
+        return{
             'id': self.id,
             'nom': self.nom,
             'quantite': self.quantite,
             'description': self.description,
             'date': self.date,
             'status':self.status,
-            'Id de utilisateur': self.id_utilisateur,
-            'Id du client': self.id_client
+            'id_utilisateur': self.id_utilisateur,
+            'id_client': self.id_client,
+            'id_produit': self.id_produit,
+            'utilisateur': utilisateur.format() if utilisateur is not None else "Command has not save by this user ",
+            'client': client.format() if client is not None else "Command has not command by this client",
+            'produit': produit.format() if produit is not None else "Command has not command by this product",
+
             
         }
 

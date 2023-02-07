@@ -1,12 +1,10 @@
 from pod.extension import db
-from pod.models import utilisateur
 
-class Profile(db.Model):
-    __tablename__='profiles'
+class Localite(db.Model):
+    __tablename__='localites'
     id=db.Column(db.Integer,primary_key=True)
     nom=db.Column(db.String(300),nullable=False)
     libelle=db.Column(db.String(300),nullable=True)
-    utilisateurs=db.relationship('Utilisateur',backref='profiles',lazy=True)
 
 
     def __init__(self, nom,libelle):
@@ -34,6 +32,3 @@ class Profile(db.Model):
             'nom': self.nom,
             'libelle': self.libelle
         }
-
-
-

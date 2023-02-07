@@ -1,6 +1,7 @@
 from flask import Blueprint,request ,jsonify,abort
 
 from ..models.utilisateur import Utilisateur
+from ..models.profile import Profile
 
 utilisateur_op = Blueprint("utilisateur_op",__name__,url_prefix="/utilisateurs")
 
@@ -15,7 +16,7 @@ def utilisateurs():
        return jsonify({
         'Success' : True,
         'utilisateurs': formated_utilisateurs,
-        'total': len(Utilisateur.query.all())
+        'total': len(Utilisateur.query.all()),
     })
 
 
@@ -46,8 +47,9 @@ def add_utilisateur():
     new_status=body.get('status',None)
     new_adresse=body.get('adresse',None)
     new_id_profile=body.get('id_profile',None)
+    new_id_localite = body.get('id_localite',None)
 
-    utilisateur = Utilisateur(matricule=new_matricule,nom=new_nom,prenom=new_prenom,email=new_email,tel=new_tel,login=new_login,mdp=new_mdp,status=new_status,adresse=new_adresse,id_profile=new_id_profile)
+    utilisateur = Utilisateur(matricule=new_matricule,nom=new_nom,prenom=new_prenom,email=new_email,tel=new_tel,login=new_login,mdp=new_mdp,status=new_status,adresse=new_adresse,id_profile=new_id_profile,id_localite=new_id_localite)
     utilisateur.insert()
     utilisateurs=Utilisateur.query.all()
     utilisateurs_formatted=[p.format()  for p in utilisateurs]

@@ -1,4 +1,6 @@
 from pod.extension import db
+from pod.models.profile import Profile
+from pod.models.localite import Localite
 
 
 class Utilisateur(db.Model):
@@ -14,10 +16,11 @@ class Utilisateur(db.Model):
     status=db.Column(db.Boolean,nullable=True)
     adresse=db.Column(db.String(200),nullable=True)
     id_profile=db.Column(db.Integer,db.ForeignKey('profiles.id'),nullable=False)
+    id_localite=db.Column(db.Integer,db.ForeignKey('localites.id'),nullable=False)
 
 
 
-    def __init__(self, matricule,nom,prenom,email,tel,login,mdp,status,adresse,id_profile):
+    def __init__(self, matricule,nom,prenom,email,tel,login,mdp,status,adresse,id_profile,id_localite):
         self.matricule=matricule
         self.nom=nom
         self.prenom=prenom
@@ -28,6 +31,7 @@ class Utilisateur(db.Model):
         self.status=status
         self.adresse=adresse
         self.id_profile=id_profile
+        self.id_localite=id_localite
 
     def insert(self):
         db.session.add(self)
@@ -44,7 +48,9 @@ class Utilisateur(db.Model):
          
 
     def format(self):
-            return{
+        profile = Profile.query.get(self.id_profile)
+        localite= Localite.query.get(self.id_localite)
+        return{
             'id': self.id,
             'matricule':self.matricule,
             'nom': self.nom,
@@ -55,8 +61,10 @@ class Utilisateur(db.Model):
             'mdp':self.mdp,
             'status':self.status,
             'adresse': self.adresse,
-            'profile': self.id_profile,
-
+            'id_profile': self.id_profile,
+            'id_localite': self.id_localite,
+            'localite': localite.format() if localite is not None else "User has no Localite",
+            'profile': profile.format() if profile is not None else "User has no profile"
         }
 
 
