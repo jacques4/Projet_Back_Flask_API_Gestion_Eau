@@ -1,4 +1,5 @@
 from flask import Blueprint,request ,jsonify,abort
+from flask_cors import CORS, cross_origin
 
 from ..models.typeclient import TypeClient
 
@@ -6,6 +7,7 @@ typeclient_op = Blueprint("typeclient_op",__name__,url_prefix="/typeclients")
 
 
 @typeclient_op.get('/')
+@cross_origin()
 def typeclient():
     typeclients=TypeClient.query.all()
     formated_typeclients=[et.format() for et in typeclients]
@@ -19,6 +21,7 @@ def typeclient():
     })
 
 @typeclient_op.get('/<int:id>')
+@cross_origin()
 def un_typeclient(id):
     typeclient=TypeClient.query.get(id)
     if typeclient is None:
@@ -33,6 +36,7 @@ def un_typeclient(id):
             })
 
 @typeclient_op.post('/')
+@cross_origin()
 def add_typeclient():
     body=request.get_json()
     new_nom=body.get('nom',None)
@@ -49,7 +53,31 @@ def add_typeclient():
         'total_typeclients': len(TypeClient.query.all())
     })
 
+
+@typeclient_op.patch('/<int:id>')
+@cross_origin()
+def mod_typeclient(id):
+    typeclient=TypeClient.query.get(id)
+
+    body=request.get_json()
+    typeclient.nom=body.get('nom',None)
+    typeclient.libelle=body.get('libelle',None)
+    
+
+    if  typeclient.nom is None or typeclient.libelle is None :
+        abort(400)
+    else:    
+       typeclient.update()
+       return jsonify(
+            {
+                "Sucess": True,
+                "Update_id_typeclient": id,
+                "New_typeclient": typeclient.format()
+            })
+
+
 @typeclient_op.delete('/<int:id>')
+@cross_origin()
 def sup_typeclient(id):
     typeclient=TypeClient.query.get(id)
     if typeclient is None:

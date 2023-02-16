@@ -1,4 +1,6 @@
 from flask import Blueprint,request ,jsonify,abort
+from flask_cors import CORS
+from flask_cors import cross_origin
 
 from ..models.localite import Localite
 
@@ -6,6 +8,7 @@ localite_op = Blueprint("localite_op",__name__,url_prefix="/localites")
 
 
 @localite_op.get('/')
+@cross_origin()
 def localite():
     localites=Localite.query.all()
     formated_localites=[et.format() for et in localites]
@@ -18,7 +21,9 @@ def localite():
         'total': len(Localite.query.all())
     })
 
+
 @localite_op.get('/<int:id>')
+@cross_origin()
 def une_localite(id):
     localite=Localite.query.get(id)
     if localite is None:
@@ -33,6 +38,7 @@ def une_localite(id):
             })
 
 @localite_op.post('/')
+@cross_origin()
 def add_localite():
     body=request.get_json()
     new_nom=body.get('nom',None)
@@ -49,7 +55,31 @@ def add_localite():
         'total_localites': len(Localite.query.all())
     })
 
+
+@localite_op.patch('/<int:id>')
+def mod_localite(id):
+    localite=Localite.query.get(id)
+
+    body=request.get_json()
+    localite.nom=body.get('nom',None)
+    localite.libelle=body.get('libelle',None)
+    
+
+    if  localite.nom is None or localite.libelle is None :
+        abort(400)
+    else:    
+       localite.update()
+       return jsonify(
+            {
+                "Sucess": True,
+                "Update_id_localite": id,
+                "New_localite": localite.format()
+            })
+
+
+
 @localite_op.delete('/<int:id>')
+@cross_origin()
 def sup_localite(id):
     localite=Localite.query.get(id)
     if localite is None:
@@ -60,6 +90,5 @@ def sup_localite(id):
             {
                 "delete_id": id,
                 "Success": True,
-                "Total": Localite.query.count(),
-            
+                "Total": Localite.query.count(),           
             })

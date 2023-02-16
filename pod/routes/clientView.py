@@ -1,5 +1,6 @@
 from flask import Blueprint,request ,jsonify,abort
 from flask_cors import CORS, cross_origin
+from flask_jwt_extended import create_access_token, create_refresh_token , jwt_required ,current_user
 
 
 from ..models.client import Client
@@ -8,6 +9,7 @@ client_op = Blueprint("client_op",__name__,url_prefix="/clients")
 
 
 @client_op.get('/')
+@cross_origin()
 def clients():
     clients=Client.query.all()
     formatted_clients=[et.format() for et in clients]
@@ -17,10 +19,12 @@ def clients():
        return jsonify({
         'Success' : True,
         'Clients': formatted_clients,
-        'total': len(Client.query.all())
+        'total': len(Client.query.all()),
+ 
     })
 
 @client_op.get('/<int:id>')
+@cross_origin()
 def un_client(id):
     client=Client.query.get(id)
     if client is None:
@@ -35,6 +39,7 @@ def un_client(id):
             })
 
 @client_op.post('/')
+@cross_origin()
 def add_client():
     body=request.get_json()
     new_nom=body.get('nom',None)
@@ -55,7 +60,35 @@ def add_client():
         'total_clients': len(Client.query.all())
     })
 
+@client_op.patch('/<int:id>')
+@cross_origin()
+def mod_client(id):
+    client=Client.query.get(id)
+
+    body=request.get_json()
+    client.nom=body.get('nom',None)
+    client.prenom=body.get('prenom',None)
+    client.email=body.get('email',None)
+    client.tel=body.get('tel',None)
+    client.adresse=body.get('adresse',None)
+    client.id_typeclient=body.get('id_typeclient',None)
+    
+
+    if client.nom is None or client.prenom is None or  client.email is None or client.tel is None or client.adresse is None or client.id_typeclient is None :
+        abort(400)
+    else:    
+       client.update()
+       return jsonify(
+            {
+                "Sucess": True,
+                "Update_id_client": id,
+                "New_client": client.format()
+            })
+
+
+
 @client_op.delete('/<int:id>')
+@cross_origin()
 def sup_client(id):
     client=Client.query.get(id)
     if client is None:
@@ -70,25 +103,4 @@ def sup_client(id):
             
             })
 
-@client_op.put('/<int:id>')
-def mod_client(id):
-    client=Client.query.get(id)
-
-    body=request.get_json()
-    client.nom=body.get('nom',None)
-    client.prenom=body.get('prenom',None)
-    client.email=body.get('email',None)
-    client.tel=body.get('tel',None)
-    client.adresse=body.get('adresse',None)
-
-    if  client.nom is None or client.prenom is None or  client.email is None or client.tel is None or client.adresse:
-        abort(400)
-    else:    
-       client.update()
-       return jsonify(
-            {
-                "Success": True,
-                "Update_id_Client": id,
-                "New_Client": client.format()
-            })
 
