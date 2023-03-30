@@ -1,4 +1,5 @@
 from flask import Blueprint,request ,jsonify,abort
+from datetime import timedelta
 from werkzeug.security import check_password_hash,generate_password_hash
 from flask_jwt_extended import create_access_token, create_refresh_token , jwt_required
 
@@ -18,8 +19,15 @@ def login():
         mdp = request.form['mdp']
 
     test = Utilisateur.query.filter_by(login=login).first()
-    if test and check_password_hash(test.mdp, mdp) :
+    if test != None and check_password_hash(test.mdp, mdp) and test.status == True :
         access_token = create_access_token(identity=login)
-        return jsonify(message='Login Successful', user=test.format() , usere=test.id , access_token=access_token,status=True)
+        return jsonify(message='Login Successful', user=test.format() , access_token=access_token,status=True)
     else:
-        return jsonify('Bad login or Password',status=False), 401
+        return jsonify(message='Bad login or Password',status=False)
+
+
+@login_op.get('/dashboard')
+@jwt_required()
+def dashboard():
+    return True
+  

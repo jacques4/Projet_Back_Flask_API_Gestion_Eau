@@ -5,6 +5,7 @@
         "jsonify",
         "libelle",
         "matricule",
+        "numrccm",
         "personne",
         "personnes",
         "prenom",

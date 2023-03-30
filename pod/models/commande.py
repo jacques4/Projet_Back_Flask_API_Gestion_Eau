@@ -9,9 +9,8 @@ from pod.models.produits import Produit
 class Commande(db.Model):
     __tablename__='commandes'
     id=db.Column(db.Integer,primary_key=True)
-    nom=db.Column(db.String(300),nullable=False)
     quantite=db.Column(db.Float,nullable=True)
-    description=db.Column(db.String(300),nullable=True)
+    prix=db.Column(db.Float,nullable=True)
     date=db.Column(db.Date,nullable=False)
     status=db.Column(db.Boolean,nullable=True)
     id_utilisateur=db.Column(db.Integer,db.ForeignKey('utilisateurs.id'),nullable=False)
@@ -20,11 +19,10 @@ class Commande(db.Model):
     
 
 
-    def __init__(self, nom,quantite,description,date,status,id_utilisateur,id_client,id_produit):
-        self.nom=nom
+    def __init__(self, quantite,prix,date,status,id_utilisateur,id_client,id_produit):
         self.quantite=quantite
-        self.description=description
         self.date=date
+        self.prix=prix
         self.status=status
         self.id_utilisateur=id_utilisateur
         self.id_client=id_client
@@ -51,10 +49,9 @@ class Commande(db.Model):
         produit=Produit.query.get(self.id_produit)
         return{
             'id': self.id,
-            'nom': self.nom,
             'quantite': self.quantite,
-            'description': self.description,
             'date': self.date,
+            'prix':self.prix,
             'status':self.status,
             'id_utilisateur': self.id_utilisateur,
             'id_client': self.id_client,

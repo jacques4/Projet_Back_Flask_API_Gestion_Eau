@@ -11,6 +11,9 @@ from pod.routes.localiteView import localite_op
 from pod.routes.typeclientView import typeclient_op
 from pod.routes.loginView import login_op
 from pod.routes.personneView import personne_op
+from pod.routes.livrerView import livrer_op
+from pod.routes.marqueView import marque_op
+
 
 from .import models
 from flask_migrate import Migrate
@@ -42,6 +45,8 @@ def create_app():
     app.register_blueprint(typeclient_op)
     app.register_blueprint(login_op)
     app.register_blueprint(personne_op)
+    app.register_blueprint(livrer_op)
+    app.register_blueprint(marque_op)
 
     return app
 

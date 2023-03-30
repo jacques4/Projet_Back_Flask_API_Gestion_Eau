@@ -9,7 +9,7 @@ personne_op = Blueprint("personne_op",__name__,url_prefix="/personnes")
 @personne_op.get('/')
 @cross_origin()
 def personnes():
-    personnes=Personne.query.all()
+    personnes=Personne.query.order_by(Personne.id).all()
     formated_personnes=[et.format() for et in personnes]
     if personnes is None:
         abort (404)
@@ -48,7 +48,7 @@ def add_personne():
 
     personne = Personne(nom=new_nom,prenom=new_prenom,email=new_email,tel=new_tel,adresse=new_adresse)
     personne.insert()
-    personnes=Personne.query.all()
+    personnes=Personne.query.order_by(Personne.id).all()
     personnes_formatted=[p.format()  for p in personnes]
     return jsonify({
         'success': True,

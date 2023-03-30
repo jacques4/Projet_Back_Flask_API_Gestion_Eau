@@ -9,7 +9,7 @@ typeclient_op = Blueprint("typeclient_op",__name__,url_prefix="/typeclients")
 @typeclient_op.get('/')
 @cross_origin()
 def typeclient():
-    typeclients=TypeClient.query.all()
+    typeclients=TypeClient.query.order_by(TypeClient.id).all()
     formated_typeclients=[et.format() for et in typeclients]
     if typeclients is None:
         abort (404)
@@ -44,7 +44,7 @@ def add_typeclient():
     
     typeclient = TypeClient(nom=new_nom,libelle=new_libelle)
     typeclient.insert()
-    typeclients=TypeClient.query.all()
+    typeclients=TypeClient.query.order_by(TypeClient.id).all()
     typeclients_formatted=[p.format()  for p in typeclients]
     return jsonify({
         'success': True,

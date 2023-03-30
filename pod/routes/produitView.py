@@ -1,5 +1,6 @@
 from flask import Blueprint,request ,jsonify,abort
 from flask_cors import CORS, cross_origin
+from datetime import datetime
 
 from ..models.produits import Produit
 
@@ -9,7 +10,7 @@ produits_op = Blueprint("produits_op",__name__,url_prefix="/produits")
 @produits_op.get('/')
 @cross_origin()
 def produits():
-    produits=Produit.query.all()
+    produits=Produit.query.order_by(Produit.id).all()
     formated_produits=[et.format() for et in produits]
     if produits is None:
         abort (404)
@@ -39,16 +40,16 @@ def un_produit(id):
 @cross_origin()
 def add_produit():
     body=request.get_json()
-    new_nom=body.get('nom',None)
+    new_id_marque=body.get('id_marque',None)
     new_quantite=body.get('quantite',None)
     new_prix=body.get('prix',None)
     new_description=body.get('description',None)
-    new_date=body.get('date',None)
+    new_id_localite=body.get('id_localite',None)
     new_id_utilisateur=body.get('id_utilisateur',None)
 
-    produit = Produit(nom=new_nom,quantite=new_quantite,prix=new_prix,description=new_description,date=new_date,id_utilisateur=new_id_utilisateur)
+    produit = Produit(id_marque=new_id_marque,quantite=new_quantite,prix=new_prix,description=new_description,date=datetime.now(),id_utilisateur=new_id_utilisateur,id_localite=new_id_localite)
     produit.insert()
-    produits=Produit.query.all()
+    produits=Produit.query.order_by(Produit.id).all()
     produits_formatted=[p.format()  for p in produits]
     return jsonify({
         'success': True,
@@ -64,14 +65,12 @@ def mod_produit(id):
     produit=Produit.query.get(id)
 
     body=request.get_json()
-    produit.nom=body.get('nom',None)
+    produit.id_marque=body.get('id_marque',None)
     produit.quantite=body.get('quantite',None)
     produit.prix=body.get('prix',None)
     produit.description=body.get('description',None)
-    produit.date=body.get('date',None)
     
-
-    if produit.nom is None or produit.quantite is None or  produit.prix is None or produit.description is None or produit.date is None :
+    if produit.id_marque is None or produit.quantite is None or  produit.prix is None or produit.description is None :
         abort(400)
     else:    
        produit.update()

@@ -10,7 +10,7 @@ profile_op = Blueprint("profile_op",__name__,url_prefix="/profiles")
 @profile_op.get('/')
 @cross_origin()
 def profile():
-    profiles=Profile.query.all()
+    profiles=Profile.query.order_by(Profile.id).all()
     formated_profiles=[et.format() for et in profiles]
     if profiles is None:
         abort (404)
@@ -45,7 +45,7 @@ def add_profile():
     
     profile = Profile(nom=new_nom,libelle=new_libelle)
     profile.insert()
-    profiles=Profile.query.all()
+    profiles=Profile.query.order_by(Profile.id).all()
     profiles_formatted=[p.format()  for p in profiles]
     return jsonify({
         'success': True,

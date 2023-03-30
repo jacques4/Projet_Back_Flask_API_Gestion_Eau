@@ -12,7 +12,7 @@ utilisateur_op = Blueprint("utilisateur_op",__name__,url_prefix="/utilisateurs")
 @utilisateur_op.get('/')
 @cross_origin()
 def utilisateurs():
-    utilisateurs=Utilisateur.query.all()
+    utilisateurs=Utilisateur.query.order_by(Utilisateur.id).all()
     formated_utilisateurs=[et.format() for et in utilisateurs]
     if utilisateurs is None:
         abort (404)
@@ -50,10 +50,11 @@ def add_utilisateur():
     new_id_profile=body.get('id_profile',None)
     new_id_localite = body.get('id_localite',None)
     new_id_personne = body.get('id_personne',None)
+    new_id_utilisateur = body.get('id_utilisateur',None)
 
-    utilisateur = Utilisateur(matricule=new_matricule,login=new_login,mdp=generate_password_hash(new_mdp) ,status=new_status,id_profile=new_id_profile,id_personne=new_id_personne,id_localite=new_id_localite)
+    utilisateur = Utilisateur(matricule=new_matricule,login=new_login,mdp=generate_password_hash(new_mdp) ,status=new_status,id_profile=new_id_profile,id_personne=new_id_personne,id_localite=new_id_localite,id_utilisateur=new_id_utilisateur)
     utilisateur.insert()
-    utilisateurs=Utilisateur.query.all()
+    utilisateurs=Utilisateur.query.order_by(Utilisateur.id).all()
     utilisateurs_formatted=[p.format()  for p in utilisateurs]
     return jsonify({
         'success': True,

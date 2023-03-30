@@ -10,7 +10,7 @@ localite_op = Blueprint("localite_op",__name__,url_prefix="/localites")
 @localite_op.get('/')
 @cross_origin()
 def localite():
-    localites=Localite.query.all()
+    localites=Localite.query.order_by(Localite.id).all()
     formated_localites=[et.format() for et in localites]
     if localites is None:
         abort (404)
@@ -46,7 +46,7 @@ def add_localite():
     
     localite = Localite(nom=new_nom,libelle=new_libelle)
     localite.insert()
-    localites=Localite.query.all()
+    localites=Localite.query.order_by(Localite.id).all()
     localites_formatted=[p.format()  for p in localites]
     return jsonify({
         'success': True,
